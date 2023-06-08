@@ -1,3 +1,4 @@
+import os
 import csv
 import smtplib
 from robot.libraries.BuiltIn import BuiltIn
@@ -36,7 +37,8 @@ class extendedKeywords:
 
     @keyword(name='Create Database')
     def create_database(self, products):
-        with open('./database/Price Tracking List.csv', 'w', newline='', errors='ignore') as file:
+        os.makedirs(os.path.dirname('database/Price Tracking List.csv'), exist_ok=True)
+        with open('database/Price Tracking List.csv', 'w', newline='', errors='ignore') as file:
             writer = csv.DictWriter(file, fieldnames=['商品名稱', '目前價格', '歷史最低價格' ,'連結', '圖片'])
             writer.writeheader()
             for product in products:
@@ -46,7 +48,7 @@ class extendedKeywords:
     def compare_and_update_database(self, products):
         send_list = []
         save_list = []
-        with open('./database/Price Tracking List.csv', 'r', newline='') as file:
+        with open('database/Price Tracking List.csv', 'r', newline='') as file:
             reader = csv.DictReader(file)
             dictionaries = list(reader)
             for product in products:
@@ -62,7 +64,7 @@ class extendedKeywords:
                 else:
                     save_list.append({**common_field, '歷史最低價格': product['price']})
 
-        with open('./database/Price Tracking List.csv', 'w', newline='', errors='ignore') as file:
+        with open('database/Price Tracking List.csv', 'w', newline='', errors='ignore') as file:
             writer = csv.DictWriter(file, fieldnames=['商品名稱', '目前價格', '歷史最低價格' ,'連結', '圖片'])
             writer.writeheader()
             writer.writerows(save_list)
@@ -119,7 +121,7 @@ class extendedKeywords:
                                                     <tbody>
                                                     <tr>
                                                         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:0px 10px 10px 30px;font-family:arial,helvetica,sans-serif;" align="left">
-                                                            <div class="v-text-align v-line-height" style="font-size: 26px; line-height: 140%; text-align: left; word-wrap: break-word;">
+                                                            <div class="v-text-align v-line-height" style="font-size: 28px; line-height: 140%; text-align: left; word-wrap: break-word;">
                                                                 <p style="line-height: 140%;"><span style="color: #ea1717; line-height: 36.4px;"><strong>${目前價格}</strong></span></p></div></td></tr></tbody></table>
 
                                                 <table id="u_content_button_2" style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
@@ -183,7 +185,7 @@ class extendedKeywords:
                     """
         
         web_content = ""
-        with open('./MailTemplate/index.html', 'r', encoding='utf-8') as file:
+        with open('MailTemplate/index.html', 'r', encoding='utf-8') as file:
             html_content = file.read()
 
         for product in products:
