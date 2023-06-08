@@ -1,0 +1,4 @@
+*** Variables ***
+${shortPeriodOfTime} =    3s
+${normalPeriodOfTime} =    10s
+&{userInfo} =    userID=0976618185    password=kang063312635

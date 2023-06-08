@@ -1,0 +1,4 @@
+*.pyc
+libspecs
+out
+database/*.csv
