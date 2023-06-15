@@ -7,7 +7,6 @@ Resource    ${EXECDIR}/keywords/reusedKeywords.txt
 Track PChome product Prices
     Go To Tracking List
     Login
-    Wait Until Tracking List Page Is Visible
     @{productList} =    Crawl PChome Product Tracking List
     @{productList} =    Remove Unavailable Product    ${productList}
     Close Browser
@@ -16,18 +15,30 @@ Track PChome product Prices
 
 *** Keywords ***
 Go To Tracking List
-    Open Browser    https://ecvip.pchome.com.tw/web/MemberProduct/Trace    Chrome    options=add_argument("--disable-notifications")
+    ${url} =    Set Variable    https://ecvip.pchome.com.tw/web/MemberProduct/Trace
+    ${system} =    Evaluate    platform.system()    platform
+    Run Keyword If    '${system}' == 'Windows'    Open Browser    ${url}    Chrome    options=add_argument("--disable-notifications")
+    ...    ELSE IF    '${system}' == 'Linux'    Open Browser    ${url}    Chrome    options=add_argument("--no-sandbox"); add_argument("--disable-notifications")
     Maximize Browser Window
+    Wait Until Login Page Is Visible
+
+Wait Until Login Page Is Visible
+    ${loginPage} =    Set Variable    //*[@id='memLogin']
+    Wait Until Page Contains Element    ${loginPage}    timeout=${shortPeriodOfTime}    error=Element should be visible.\n${loginPage}
+    Wait Until Element Is Visible    ${loginPage}    timeout=${shortPeriodOfTime}    error=Element should be visible.\n${loginPage}
 
 Login
     ${userField} =    Set Variable    //*[@id='loginAcc']
     ${passwordField} =    Set Variable    //*[@id='loginPwd']
     ${keepBtn} =    Set Variable    //*[@id='btnKeep']
     ${loginBtn} =    Set Variable    //*[@id='btnLogin']
+    ${default} =    Set Selenium Speed    0.5s
     Input Text After It Is Visible    ${userField}    ${userInfo}[userID]
     Click Element After It Is Visible    ${keepBtn}
     Input Text After It Is Visible    ${passwordField}    ${userInfo}[password]
     Click Element After It Is Visible    ${loginBtn}
+    Set Selenium Speed    ${default}
+    Wait Until Tracking List Page Is Visible
 
 Wait Until Tracking List Page Is Visible
     ${trackingListPage} =    Set Variable    //*[@id = 'traceData']
@@ -52,9 +63,9 @@ Get Products Information
         ${price} =    Get Text After It Is Visible    (//*[@class='IT_PRICE'])[${index}+1]
         ${link} =    Get Element Attribute After It Is Visible    (${item}//*[@class='text13']//a)[${index}+1]    href
         ${image} =    Get Element Attribute After It Is Visible    (//*[@class='prodpic']//img)[${index}+1]    src
-        ${name} =    Evaluate     "".join(char for char in '${name}' if ord(char) < 65536)
+        ${name} =    Evaluate     ''.join(char for char in '${name}' if ord(char) < 65536)
         ${price} =    Evaluate    '${price}'.replace('$','')
-        ${status} =    Run Keyword And Return Status    Page Should Not Contain Element    (//*[contains(@class, 'site_btn')])[${index}+1][contains(@class,'soldOut')]
+        ${status} =    Run Keyword And Return Status    Element Should Not Be Visible    (//*[contains(@class, 'site_btn')])[${index}+1][contains(@class,'soldOut')]
         &{product} =    Create Dictionary    name=${name}    price=${price}    link=${link}    image=${image}    status=${status}
         Append To List    ${products}    ${product}
     END
