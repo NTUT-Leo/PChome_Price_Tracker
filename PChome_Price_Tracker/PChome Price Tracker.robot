@@ -5,11 +5,11 @@ Resource    ${EXECDIR}/keywords/reusedKeywords.txt
 
 *** Test Cases ***
 Track PChome product Prices
-    Go To Tracking List
+    [Setup]    Go To Tracking List
     Login
     @{productList} =    Crawl PChome Product Tracking List
     @{productList} =    Remove Unavailable Product    ${productList}
-    Close Browser
+    [Teardown]    Close Browser
     @{sendList}    Create Or Update Database    ${productList}
     Run Keyword Unless    ${sendList} == @{EMPTY}    Send Discount Notification Mail To User    ${sendList}
 
