@@ -11,15 +11,15 @@ Track PChome product Prices
     Login
     @{productList} =    Crawl PChome Product Tracking List
     @{productList} =    Remove Unavailable Product    ${productList}
-    @{sendList}    Create Or Update Database    ${productList}
+    @{sendList} =    Create Or Update Database    ${productList}
     Run Keyword Unless    ${sendList} == @{EMPTY}    Send Discount Notification Mail To User    ${sendList}
 
 *** Keywords ***
 Go To Tracking List
     ${url} =    Set Variable    https://ecvip.pchome.com.tw/web/MemberProduct/Trace
     ${system} =    Evaluate    platform.system()    platform
-    Run Keyword If    '${system}' == 'Windows'    Open Browser    ${url}    Chrome    options=add_argument("--disable-notifications")
-    ...    ELSE IF    '${system}' == 'Linux'    Open Browser    ${url}    Chrome    options=add_argument("--no-sandbox"); add_argument("--disable-notifications")
+    Run Keyword If    '${system}' == 'Windows'    Open Browser    ${url}    Chrome    options=${chromeOptions}
+    ...    ELSE IF    '${system}' == 'Linux'    Open Browser    ${url}    Chrome    options=${chromeOptions}; add_argument("--no-sandbox")
     Maximize Browser Window
     Wait Until Login Page Is Visible
 
@@ -70,7 +70,7 @@ Get Products Information
         &{product} =    Create Dictionary    name=${name}    price=${price}    link=${link}    image=${image}    status=${status}
         Append To List    ${products}    ${product}
     END
-    ${btnExist}    Run Keyword And Return Status    Element Should Be Visible    ${nextPageBtn}
+    ${btnExist} =    Run Keyword And Return Status    Element Should Be Visible    ${nextPageBtn}
     Run Keyword If    ${btnExist}    Run Keywords    Click Element After It Is Visible    ${nextPageBtn}
     ...                                       AND    Get Products Information    ${products}
     [Return]    @{products}

@@ -1,4 +1,5 @@
 *** Variables ***
+${chromeOptions} =    add_argument("--disable-notifications"); add_experimental_option("excludeSwitches", ['enable-automation'])
+&{userInfo} =    userID=0976618185    password=kang063312635
 ${shortPeriodOfTime} =    3s
 ${normalPeriodOfTime} =    10s
-&{userInfo} =    userID=0976618185    password=kang063312635
