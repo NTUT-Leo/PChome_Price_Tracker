@@ -2,14 +2,15 @@
 Library    Collections
 Library    OperatingSystem
 Resource    ${EXECDIR}/keywords/reusedKeywords.txt
+Test Setup    Go To Tracking List
+Test Teardown    Run Keywords    Delete All Cookies
+...                       AND    Close Browser
 
 *** Test Cases ***
 Track PChome product Prices
-    [Setup]    Go To Tracking List
     Login
     @{productList} =    Crawl PChome Product Tracking List
     @{productList} =    Remove Unavailable Product    ${productList}
-    [Teardown]    Close Browser
     @{sendList}    Create Or Update Database    ${productList}
     Run Keyword Unless    ${sendList} == @{EMPTY}    Send Discount Notification Mail To User    ${sendList}
 
