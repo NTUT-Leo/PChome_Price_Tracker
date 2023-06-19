@@ -18,7 +18,7 @@ Go To Tracking List
     [Arguments]    ${proxy}=${False}
     ${url} =    Set Variable    https://ecvip.pchome.com.tw/web/MemberProduct/Trace
     ${system} =    Evaluate    platform.system()
-    ${chromeOptions} =    Set Variable If    ${proxy}    ${chromeOptions}; add_argument(--proxy-server=socks5://localhost:9050")    ${chromeOptions}
+    ${chromeOptions} =    Set Variable If    ${proxy}    ${chromeOptions}; add_argument("--proxy-server=socks5://localhost:9050")    ${chromeOptions}
     Run Keyword If    '${system}' == 'Windows'    Open Browser    ${url}    Chrome    options=${chromeOptions}
     ...    ELSE IF    '${system}' == 'Linux'    Open Browser    ${url}    Chrome    options=${chromeOptions}; add_argument("--no-sandbox")
     Maximize Browser Window
