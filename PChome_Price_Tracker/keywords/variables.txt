@@ -1,5 +1,5 @@
 *** Variables ***
-${chromeOptions} =    add_argument("--disable-notifications"); add_argument("--disable-blink-features=AutomationControlled"); add_experimental_option("excludeSwitches", ['enable-automation']); add_experimental_option("useAutomationExtension", False)
-&{userInfo} =    userID=0976618185    password=kang063312635
+${chromeOptions} =    add_argument("--disable-notifications"); add_argument("user-agent=${{fake_useragent.UserAgent(browsers=['chrome', 'firefox', 'safari', 'edge']).random}}"); add_argument("--disable-blink-features=AutomationControlled"); add_experimental_option("excludeSwitches", ['enable-automation']); add_experimental_option("useAutomationExtension", False)
 ${shortPeriodOfTime} =    3s
 ${normalPeriodOfTime} =    10s
+&{userInfo} =    userID=0976618185    password=kang063312635
