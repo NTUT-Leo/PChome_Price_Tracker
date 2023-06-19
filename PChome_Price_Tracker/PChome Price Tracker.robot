@@ -3,8 +3,7 @@ Library    Collections
 Library    OperatingSystem
 Resource    ${EXECDIR}/keywords/reusedKeywords.txt
 Test Setup    Go To Tracking List
-Test Teardown    Run Keywords    Delete All Cookies
-...                       AND    Close Browser
+Test Teardown    Close Browser
 
 *** Test Cases ***
 Track PChome product Prices

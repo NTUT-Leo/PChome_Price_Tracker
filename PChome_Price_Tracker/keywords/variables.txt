@@ -1,5 +1,5 @@
 *** Variables ***
-${chromeOptions} =    add_argument("--disable-notifications"); add_experimental_option("excludeSwitches", ['enable-automation'])
+${chromeOptions} =    add_argument("--disable-notifications"); add_argument("--disable-blink-features=AutomationControlled"); add_experimental_option("excludeSwitches", ['enable-automation']); add_experimental_option("useAutomationExtension", False)
 &{userInfo} =    userID=0976618185    password=kang063312635
 ${shortPeriodOfTime} =    3s
 ${normalPeriodOfTime} =    10s
