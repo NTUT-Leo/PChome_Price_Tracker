@@ -28,8 +28,8 @@ Go To Tracking List
 
 Wait Until Login Page Is Visible
     ${loginPage} =    Set Variable    //*[@id='memLogin']
-    Wait Until Page Contains Element    ${loginPage}    timeout=${shortPeriodOfTime}    error=Element should be visible.\n${loginPage}
-    Wait Until Element Is Visible    ${loginPage}    timeout=${shortPeriodOfTime}    error=Element should be visible.\n${loginPage}
+    Wait Until Page Contains Element    ${loginPage}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${loginPage}
+    Wait Until Element Is Visible    ${loginPage}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${loginPage}
 
 Login
     ${userField} =    Set Variable    //*[@id='loginAcc']
@@ -46,8 +46,8 @@ Login
 
 Wait Until Tracking List Page Is Visible
     ${trackingListPage} =    Set Variable    //*[@id = 'traceData']
-    Wait Until Page Contains Element    ${trackingListPage}    timeout=${shortPeriodOfTime}    error=Element should be visible.\n${trackingListPage}
-    Wait Until Element Is Visible    ${trackingListPage}    timeout=${shortPeriodOfTime}    error=Element should be visible.\n${trackingListPage}
+    Wait Until Page Contains Element    ${trackingListPage}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${trackingListPage}
+    Wait Until Element Is Visible    ${trackingListPage}    timeout=${longPeriodOfTime}    error=Element should be visible.\n${trackingListPage}
 
 Crawl PChome Product Tracking List
     @{products} =    Create List
@@ -80,8 +80,8 @@ Get Products Information
 
 Wait Until Product List Is Visible
     ${item} =    Set Variable    //*[contains(@class, 'itemRow')]
-    Wait Until Page Contains Element    ${item}    timeout=${shortPeriodOfTime}    error=Element should be visible.\n${item}
-    Wait Until Element Is Visible    ${item}    timeout=${shortPeriodOfTime}    error=Element should be visible.\n${item}
+    Wait Until Page Contains Element    ${item}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${item}
+    Wait Until Element Is Visible    ${item}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${item}
 
 Remove Unavailable Product
     [Arguments]    ${products}

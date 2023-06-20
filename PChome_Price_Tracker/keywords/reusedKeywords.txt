@@ -29,7 +29,7 @@ Input Text After It Is Visible
     [Arguments]    ${locator}    ${text}
     Scroll Element Into Center Of View    ${locator}
     Wait Until Page Contains Element    ${locator}    timeout=${shortPeriodOfTime}    error=Input field should be visible.\n${locator}
-    Wait Until Element Is Visible    ${locator}    timeout=${shortPeriodOfTime}    error=Input field should be visible.\n${locator}
+    Wait Until Element Is Visible    ${locator}    timeout=${normalPeriodOfTime}    error=Input field should be visible.\n${locator}
     Wait Until Element Is Enabled    ${locator}    timeout=${normalPeriodOfTime}    error=Input field should be enabled.\n${locator}
     Input Text    ${locator}    ${text}
 
