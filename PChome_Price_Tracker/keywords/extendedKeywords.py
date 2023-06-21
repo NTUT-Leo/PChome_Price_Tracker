@@ -38,7 +38,7 @@ class extendedKeywords:
         self._current_browser().execute_script(scrollElementIntoMiddle, element)
 
     @keyword(name='Switch IP')
-    def switch_ip():
+    def switch_ip(self):
         with Controller.from_port(port=9051) as controller:
             controller.authenticate()
             controller.signal(Signal.NEWNYM)

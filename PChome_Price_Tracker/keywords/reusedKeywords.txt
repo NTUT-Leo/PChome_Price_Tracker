@@ -33,6 +33,11 @@ Input Text After It Is Visible
     Wait Until Element Is Enabled    ${locator}    timeout=${normalPeriodOfTime}    error=Input field should be enabled.\n${locator}
     Input Text    ${locator}    ${text}
 
+Wait Until Product List Is Visible
+    ${item} =    Set Variable    //*[contains(@class, 'itemRow')]
+    Wait Until Page Contains Element    ${item}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${item}
+    Wait Until Element Is Visible    ${item}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${item}
+
 # Click Tab
     # [Documentation]
     # ...    Usage:

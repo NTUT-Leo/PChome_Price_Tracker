@@ -2,7 +2,7 @@
 Library    Collections
 Library    OperatingSystem
 Resource    ${EXECDIR}/keywords/reusedKeywords.txt
-Test Setup    Go To Tracking List    fakeDevice=${True}
+Test Setup    Wait Until Keyword Succeeds    5x    0s    Go To Tracking List    fakeDevice=${True}
 Test Teardown    Close Browser
 
 *** Test Cases ***
@@ -20,11 +20,19 @@ Go To Tracking List
     ${userAgent} =    Run Keyword If    ${fakeDevice}    Generate User Agent
     ${chromeOptions} =    Set Variable If    ${fakeDevice}    ${chromeOptions}; add_argument("user-agent=${userAgent}")    ${chromeOptions}
     ${chromeOptions} =    Set Variable If    ${proxy}    ${chromeOptions}; add_argument("--proxy-server=socks5://localhost:9050")    ${chromeOptions}
+    Register Keyword To Run On Failure    Troubleshoot Permissions
     ${system} =    Evaluate    platform.system()
     Run Keyword If    '${system}' == 'Windows'    Open Browser    ${url}    Chrome    options=${chromeOptions}
     ...    ELSE IF    '${system}' == 'Linux'    Open Browser    ${url}    Chrome    options=${chromeOptions}; add_argument("--no-sandbox")
     Maximize Browser Window
     Wait Until Login Page Is Visible
+
+Troubleshoot Permissions
+    ${forbidden} =    Run Keyword And Return Status    Title Should Be    403 Forbidden
+    Run Keyword If    ${forbidden}    Run Keywords    Switch IP
+    ...                                        AND    Close Browser
+    ...                                        AND    Sleep    ${normalPeriodOfTime}
+    ...       ELSE    Fail    Exception condition, test halt.
 
 Wait Until Login Page Is Visible
     ${loginPage} =    Set Variable    //*[@id='memLogin']
@@ -37,7 +45,7 @@ Login
     ${keepBtn} =    Set Variable    //*[@id='btnKeep']
     ${loginBtn} =    Set Variable    //*[@id='btnLogin']
     ${default} =    Set Selenium Speed    0.6s
-    Register Keyword To Run On Failure    Troubleshoot
+    Register Keyword To Run On Failure    Troubleshoot Login
     Input Text After It Is Visible    ${userField}    ${userInfo}[userID]
     Click Element After It Is Visible    ${keepBtn}
     Input Text After It Is Visible    ${passwordField}    ${userInfo}[password]
@@ -45,14 +53,13 @@ Login
     Set Selenium Speed    ${default}
     Wait Until Tracking List Page Is Visible
 
-Troubleshoot
-    ${forbidden} =    Run Keyword And Return Status    Element Should Contain    //title    403 Forbidden
+Troubleshoot Login
     ${reCaptcha} =    Run Keyword And Return Status    Element Should Be Visible    //*[@id='recaptcha_checkLoginAcc']//iframe[@title='reCAPTCHA']
-    Run Keyword If    ${forbidden} or ${reCaptcha}    Run Keywords    Switch IP
-    ...                                                        AND    Close Browser
-    ...                                                        AND    Sleep    ${normalPeriodOfTime}
-    ...                                                        AND    Go To Tracking List    fakeDevice=${True}
-    ...       ELSE    Fail    Exception condition, process halt.
+    Run Keyword If    ${reCaptcha}    Run Keywords    Switch IP
+    ...                                        AND    Close Browser
+    ...                                        AND    Sleep    ${normalPeriodOfTime}
+    ...                                        AND    Go To Tracking List    fakeDevice=${True}
+    ...       ELSE    Fail    Exception condition, test halt.
 
 Wait Until Tracking List Page Is Visible
     ${trackingListPage} =    Set Variable    //*[@id = 'traceData']
@@ -88,11 +95,6 @@ Get Products Information
     ...                                                  AND    Get Products Information    ${products}
     [Return]    @{products}
 
-Wait Until Product List Is Visible
-    ${item} =    Set Variable    //*[contains(@class, 'itemRow')]
-    Wait Until Page Contains Element    ${item}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${item}
-    Wait Until Element Is Visible    ${item}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${item}
-
 Remove Unavailable Product
     [Arguments]    ${products}
     ${inputField} =    Set Variable    //*[@id='keyword']
@@ -113,10 +115,10 @@ Remove Unavailable Product
 
 Wait Until Product Is Deleted
     [Arguments]    ${name}
-    Wait Until Page Does Not Contain Element    //*[contains(@class, 'itemRow')]//u[normalize-space()='${name}']
+    Wait Until Element Is Not Visible    //*[contains(@class, 'itemRow')]//u[normalize-space()='${name}']    timeout=${normalPeriodOfTime}    error=Element should not be visible.\n${name}
 
 Create Or Update Database
     [Arguments]    ${products}
-    ${fileExist}    Run Keyword And Return Status    File Should Exist    ${EXECDIR}/database/Price Tracking List.csv
+    ${fileExist} =    Run Keyword And Return Status    File Should Exist    ${EXECDIR}/database/Price Tracking List.csv
     Run Keyword And Return If    ${fileExist}    Compare And Update Database    ${products}
     Create Database    ${products}
