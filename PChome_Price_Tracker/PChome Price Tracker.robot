@@ -7,7 +7,7 @@ Test Teardown    Close Browser
 
 *** Test Cases ***
 Track PChome product Prices
-    Login
+    Wait Until Keyword Succeeds    5x    0s    Login
     @{productList} =    Crawl PChome Product Tracking List
     @{productList} =    Remove Unavailable Product    ${productList}
     @{sendList} =    Create Or Update Database    ${productList}
@@ -37,12 +37,22 @@ Login
     ${keepBtn} =    Set Variable    //*[@id='btnKeep']
     ${loginBtn} =    Set Variable    //*[@id='btnLogin']
     ${default} =    Set Selenium Speed    0.6s
+    Register Keyword To Run On Failure    Troubleshoot
     Input Text After It Is Visible    ${userField}    ${userInfo}[userID]
     Click Element After It Is Visible    ${keepBtn}
     Input Text After It Is Visible    ${passwordField}    ${userInfo}[password]
     Click Element After It Is Visible    ${loginBtn}
     Set Selenium Speed    ${default}
     Wait Until Tracking List Page Is Visible
+
+Troubleshoot
+    ${forbidden} =    Run Keyword And Return Status    Element Should Contain    //title    403 Forbidden
+    ${reCaptcha} =    Run Keyword And Return Status    Element Should Be Visible    //*[@id='recaptcha_checkLoginAcc']//iframe[@title='reCAPTCHA']
+    Run Keyword If    ${forbidden} or ${reCaptcha}    Run Keywords    Switch IP
+    ...                                                        AND    Close Browser
+    ...                                                        AND    Sleep    ${normalPeriodOfTime}
+    ...                                                        AND    Go To Tracking List    fakeDevice=${True}
+    ...       ELSE    Fail    Exception condition, process halt.
 
 Wait Until Tracking List Page Is Visible
     ${trackingListPage} =    Set Variable    //*[@id = 'traceData']

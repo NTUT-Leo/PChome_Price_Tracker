@@ -1,7 +1,8 @@
-import os
 import csv
 import random
 import smtplib
+from stem import Signal
+from stem.control import Controller
 from robot.libraries.BuiltIn import BuiltIn
 from robot.api.deco import keyword
 from email.mime.multipart import MIMEMultipart
@@ -35,6 +36,12 @@ class extendedKeywords:
                                    '    behavior: "smooth"'
                                    '});')
         self._current_browser().execute_script(scrollElementIntoMiddle, element)
+
+    @keyword(name='Switch IP')
+    def switch_ip():
+        with Controller.from_port(port=9051) as controller:
+            controller.authenticate()
+            controller.signal(Signal.NEWNYM)
 
     @keyword(name='Generate User Agent')
     def generate_user_agent(self):
