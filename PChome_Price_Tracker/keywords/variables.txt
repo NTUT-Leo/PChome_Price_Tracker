@@ -9,4 +9,4 @@ ${chromeOptions} =    SEPARATOR=;${SPACE}
 ...                   add_argument("--disable-blink-features=AutomationControlled")
 ...                   add_experimental_option("useAutomationExtension", False)
 ...                   add_experimental_option("excludeSwitches", ['enable-automation'])
-...                   add_experimental_option("pref", {"credentials_enable_service": False, "profile.password_manager_enabled": False})
+...                   add_experimental_option("prefs", {"credentials_enable_service": False, "profile.password_manager_enabled": False})
