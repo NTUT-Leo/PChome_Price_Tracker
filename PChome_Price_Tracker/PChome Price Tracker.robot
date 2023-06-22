@@ -39,10 +39,10 @@ Login
     ${default} =    Set Selenium Speed    0.6s
     Input Text After It Is Visible    //*[@id='loginAcc']    ${userInfo}[userID]
     Click Element After It Is Visible    //*[@id='btnKeep']
-    ${detection} =    Run Keyword And Return Status    Wait Until Element Is Visible    ${reCAPTCHA}    timeout=${shortPeriodOfTime}    error=Element should be visible.\n${reCAPTCHA}
+    ${detection} =    Run Keyword And Return Status    Wait Until Element Is Visible    ${reCAPTCHA}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${reCAPTCHA}
     Input Text After It Is Visible    //*[@id='loginPwd']    ${userInfo}[password]
     Click Element After It Is Visible    //*[@id='btnLogin']
-    ${detection} =    Run Keyword And Return Status    Wait Until Element Is Visible    ${reCAPTCHA}    timeout=${shortPeriodOfTime}    error=Element should be visible.\n${reCAPTCHA}
+    ${detection} =    Run Keyword And Return Status    Wait Until Element Is Visible    ${reCAPTCHA}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${reCAPTCHA}
     Set Selenium Speed    ${default}
     Wait Until Tracking List Page Is Visible
     [Teardown]    Run Keyword If    ${detection}    Run Keywords    Switch IP
