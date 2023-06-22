@@ -2,12 +2,12 @@
 Library    Collections
 Library    OperatingSystem
 Resource    ${EXECDIR}/keywords/reusedKeywords.txt
-Test Setup    Wait Until Keyword Succeeds    5x    0s    Go To Tracking List    fakeDevice=${True}
+Test Setup    Wait Until Keyword Succeeds    ${retry}    0s    Go To Tracking List    fakeDevice=${True}
 Test Teardown    Close Browser
 
 *** Test Cases ***
 Track PChome product Prices
-    Wait Until Keyword Succeeds    5x    0s    Login
+    Wait Until Keyword Succeeds    ${retry}    0s    Login
     @{productList} =    Crawl PChome Product Tracking List
     @{productList} =    Remove Unavailable Product    ${productList}
     @{sendList} =    Create Or Update Database    ${productList}
@@ -20,19 +20,14 @@ Go To Tracking List
     ${userAgent} =    Run Keyword If    ${fakeDevice}    Generate User Agent
     ${chromeOptions} =    Set Variable If    ${fakeDevice}    ${chromeOptions}; add_argument("user-agent=${userAgent}")    ${chromeOptions}
     ${chromeOptions} =    Set Variable If    ${proxy}    ${chromeOptions}; add_argument("--proxy-server=socks5://localhost:9050")    ${chromeOptions}
-    Register Keyword To Run On Failure    Troubleshoot Permissions
-    ${system} =    Evaluate    platform.system()
-    Run Keyword If    '${system}' == 'Windows'    Open Browser    ${url}    Chrome    options=${chromeOptions}
-    ...    ELSE IF    '${system}' == 'Linux'    Open Browser    ${url}    Chrome    options=${chromeOptions}; add_argument("--no-sandbox")
+    Close Browser
+    Run Keyword If    '${{platform.system()}}' == 'Windows'    Open Browser    ${url}    Chrome    options=${chromeOptions}
+    ...    ELSE IF    '${{platform.system()}}' == 'Linux'    Open Browser    ${url}    Chrome    options=${chromeOptions}; add_argument("--no-sandbox")
     Maximize Browser Window
-    Wait Until Login Page Is Visible
-
-Troubleshoot Permissions
     ${forbidden} =    Run Keyword And Return Status    Title Should Be    403 Forbidden
-    Run Keyword If    ${forbidden}    Run Keywords    Switch IP
-    ...                                        AND    Close Browser
-    ...                                        AND    Sleep    ${normalPeriodOfTime}
-    ...       ELSE    Fail    Exception condition, test halt.
+    Wait Until Login Page Is Visible
+    [Teardown]    Run Keyword If    ${forbidden}    Run Keywords    Switch IP
+    ...                                                      AND    Sleep    ${normalPeriodOfTime}
 
 Wait Until Login Page Is Visible
     ${loginPage} =    Set Variable    //*[@id='memLogin']
@@ -40,30 +35,23 @@ Wait Until Login Page Is Visible
     Wait Until Element Is Visible    ${loginPage}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${loginPage}
 
 Login
-    ${userField} =    Set Variable    //*[@id='loginAcc']
-    ${passwordField} =    Set Variable    //*[@id='loginPwd']
-    ${keepBtn} =    Set Variable    //*[@id='btnKeep']
-    ${loginBtn} =    Set Variable    //*[@id='btnLogin']
+    ${reCAPTCHA} =    Set Variable    //*[@id='recaptcha_checkLoginAcc']//iframe[@title='reCAPTCHA']
     ${default} =    Set Selenium Speed    0.6s
-    Register Keyword To Run On Failure    Troubleshoot Login
-    Input Text After It Is Visible    ${userField}    ${userInfo}[userID]
-    Click Element After It Is Visible    ${keepBtn}
-    Input Text After It Is Visible    ${passwordField}    ${userInfo}[password]
-    Click Element After It Is Visible    ${loginBtn}
+    Input Text After It Is Visible    //*[@id='loginAcc']    ${userInfo}[userID]
+    Click Element After It Is Visible    //*[@id='btnKeep']
+    ${detection} =    Run Keyword And Return Status    Wait Until Element Is Visible    ${reCAPTCHA}    timeout=${shortPeriodOfTime}    error=Element should be visible.\n${reCAPTCHA}
+    Input Text After It Is Visible    //*[@id='loginPwd']    ${userInfo}[password]
+    Click Element After It Is Visible    //*[@id='btnLogin']
+    ${detection} =    Run Keyword And Return Status    Wait Until Element Is Visible    ${reCAPTCHA}    timeout=${shortPeriodOfTime}    error=Element should be visible.\n${reCAPTCHA}
     Set Selenium Speed    ${default}
     Wait Until Tracking List Page Is Visible
-
-Troubleshoot Login
-    ${reCaptcha} =    Run Keyword And Return Status    Element Should Be Visible    //*[@id='recaptcha_checkLoginAcc']//iframe[@title='reCAPTCHA']
-    Run Keyword If    ${reCaptcha}    Run Keywords    Switch IP
-    ...                                        AND    Close Browser
-    ...                                        AND    Sleep    ${normalPeriodOfTime}
-    ...                                        AND    Go To Tracking List    fakeDevice=${True}
-    ...       ELSE    Fail    Exception condition, test halt.
+    [Teardown]    Run Keyword If    ${detection}    Run Keywords    Switch IP
+    ...                                                      AND    Sleep    ${normalPeriodOfTime}
+    ...                                                      AND    Wait Until Keyword Succeeds    ${retry}    0s    Go To Tracking List    fakeDevice=${True}
 
 Wait Until Tracking List Page Is Visible
     ${trackingListPage} =    Set Variable    //*[@id = 'traceData']
-    Wait Until Page Contains Element    ${trackingListPage}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${trackingListPage}
+    Wait Until Page Contains Element    ${trackingListPage}    timeout=${longPeriodOfTime}    error=Element should be visible.\n${trackingListPage}
     Wait Until Element Is Visible    ${trackingListPage}    timeout=${longPeriodOfTime}    error=Element should be visible.\n${trackingListPage}
 
 Crawl PChome Product Tracking List

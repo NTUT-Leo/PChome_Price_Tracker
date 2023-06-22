@@ -1,6 +1,7 @@
 *** Variables ***
+${retry} =    5x
 ${chromeOptions} =    add_argument("--disable-notifications"); add_argument("--disable-blink-features=AutomationControlled"); add_experimental_option("excludeSwitches", ['enable-automation']); add_experimental_option("useAutomationExtension", False)
-${shortPeriodOfTime} =    3s
+${shortPeriodOfTime} =    5s
 ${normalPeriodOfTime} =    10s
 ${longPeriodOfTime} =    15s
 &{userInfo} =    userID=0976618185    password=kang063312635
