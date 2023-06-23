@@ -1,5 +1,8 @@
 *** Variables ***
+${fakeDevice} =    ${True}
+${proxy} =    ${False}
 ${retry} =    5x
+${retryInterval} =    0s
 ${shortPeriodOfTime} =    5s
 ${normalPeriodOfTime} =    10s
 ${longPeriodOfTime} =    15s

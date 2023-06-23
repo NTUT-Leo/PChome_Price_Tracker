@@ -7,7 +7,7 @@ pip install -r requirements.txt
 
 runTest(){
     date
-    robot -F robot -d ./out/$BUILD_NUMBER --output output.xml -l log.html -r report.html -P ./ -P ./"keywords" -L TRACE:INFO PChome\ Price\ Tracker.robot
+    robot -F robot -d ./out/$BUILD_NUMBER --output output.xml -l log.html -r report.html -P ./"keywords" -L TRACE:INFO PChome\ Price\ Tracker.robot
 }
 
 runTest
