@@ -2,12 +2,12 @@
 Library    Collections
 Library    OperatingSystem
 Resource    ${EXECDIR}/keywords/reusedKeywords.txt
-Test Setup    Wait Until Keyword Succeeds    ${retry}    ${retryInterval}    Go To Tracking List
+Test Setup    Go To Tracking List
 Test Teardown    Close Browser
 
 *** Test Cases ***
 Track PChome product Prices
-    Wait Until Keyword Succeeds    ${retry}    ${retryInterval}    Login
+    Login
     @{productList} =    Crawl PChome Product Tracking List
     @{productList} =    Remove Unavailable Product    ${productList}
     @{sendList} =    Create Or Update Database    ${productList}
@@ -19,35 +19,30 @@ Go To Tracking List
     ${userAgent} =    Run Keyword If    ${fakeDevice}    Generate User Agent
     ${chromeOptions} =    Set Variable If    ${fakeDevice}    ${chromeOptions}; add_argument("user-agent=${userAgent}")    ${chromeOptions}
     ${chromeOptions} =    Set Variable If    ${proxy}    ${chromeOptions}; add_argument("--proxy-server=socks5://localhost:9050")    ${chromeOptions}
-    Close Browser
     Run Keyword If    '${{platform.system()}}' == 'Windows'    Open Browser    ${url}    Chrome    options=${chromeOptions}
     ...    ELSE IF    '${{platform.system()}}' == 'Linux'    Open Browser    ${url}    Chrome    options=${chromeOptions}; add_argument("--no-sandbox")
     Maximize Browser Window
-    ${forbidden} =    Run Keyword And Return Status    Title Should Be    403 Forbidden
     Wait Until Login Page Is Visible
-    [Teardown]    Run Keyword If    ${proxy} and ${forbidden}    Run Keywords    Switch IP
-    ...                                                          AND    Sleep    ${normalPeriodOfTime}
+    [Teardown]    Run Keyword If    ${proxy} and '${KEYWORD_STATUS}' == 'FAIL'    Run Keywords    Switch IP    AND    Sleep    ${normalPeriodOfTime}
 
 Wait Until Login Page Is Visible
-    ${loginPage} =    Set Variable    //*[@id='memLogin']
+    ${loginPage} =    Set Variable    //body//script/preceding-sibling::*//*[@id='memLogin']
     Wait Until Page Contains Element    ${loginPage}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${loginPage}
     Wait Until Element Is Visible    ${loginPage}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${loginPage}
 
 Login
-    ${reCAPTCHA} =    Set Variable    //*[@id='recaptcha_checkLoginAcc']//iframe[@title='reCAPTCHA']
     Input Text After It Is Visible    //*[@id='loginAcc']    ${userInfo}[userID]
     Sleep    ${shortPeriodOfTime}
     Click Element After It Is Visible    //*[@id='btnKeep']
-    ${detection} =    Run Keyword And Return Status    Wait Until Element Is Visible    ${reCAPTCHA}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${reCAPTCHA}
     Input Text After It Is Visible    //*[@id='loginPwd']    ${userInfo}[password]
     Sleep    ${normalPeriodOfTime}
     Click Element After It Is Visible    //*[@id='btnLogin']
-    ${detection} =    Run Keyword And Return Status    Wait Until Element Is Visible    ${reCAPTCHA}    timeout=${normalPeriodOfTime}    error=Element should be visible.\n${reCAPTCHA}
-    ${inTrackingListPage} =    Run Keyword And Return Status    Wait Until Tracking List Page Is Visible
-    [Teardown]    Run Keyword If    ${proxy} and (${detection} or not ${inTrackingListPage})    Run Keywords    Switch IP
-    ...                                                                                                  AND    Sleep    ${normalPeriodOfTime}
-    ...                                                                                                  AND    Wait Until Keyword Succeeds    ${retry}    ${retryInterval}    Go To Tracking List
-    ...                  ELSE IF    ${detection} or not ${inTrackingListPage}    Wait Until Keyword Succeeds    ${retry}    ${retryInterval}    Go To Tracking List
+    Wait Until Tracking List Page Is Visible
+    [Teardown]    Run Keyword If    '${KEYWORD_STATUS}' == 'FAIL'    Login Troubleshoot
+
+Login Troubleshoot
+    ${detection} =    Run Keyword And Return Status    Element Should Be Visible    //*[@id='recaptcha_checkLoginAcc']//iframe[@title='reCAPTCHA']
+    Run Keyword If    ${proxy} and ${detection}    Run Keywords    Switch IP    AND    Sleep    ${normalPeriodOfTime}
 
 Wait Until Tracking List Page Is Visible
     ${trackingListPage} =    Set Variable    //*[@id = 'traceData']
