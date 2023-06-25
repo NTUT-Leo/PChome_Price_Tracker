@@ -18,9 +18,9 @@ runTest(){
 
 postProcessing(){
     echo =================================Test==Result=================================
-    rebot -d ./out/$BUILD_NUMBER/result -o output.xml -l log.html -r report.html --merge ./out/$BUILD_NUMBER/output-*.xml
+    rebot -d ./out/$BUILD_NUMBER/result -o output.xml -l log.html -r report.html --merge $(ls -v ./out/$BUILD_NUMBER/output-*.xml)
     echo ================================Merged==Output================================
-    rebot -d ./out/$BUILD_NUMBER -l log.html -r report.html --name PChome\ Price\ Tracker ./out/$BUILD_NUMBER/output-*.xml
+    rebot -d ./out/$BUILD_NUMBER -l log.html -r report.html --name PChome\ Price\ Tracker $(ls -v ./out/$BUILD_NUMBER/output-*.xml)
     rm -f ./out/$BUILD_NUMBER/output-*.xml
 }
 
