@@ -10,6 +10,7 @@ cd PChome_Price_Tracker
 
 pip install -r requirements.txt
 
+SET ROUND=0
 CALL :runTest
 CALL :postProcessing
 
@@ -17,7 +18,6 @@ deactivate
 EXIT 0
 
 :runTest
-SET ROUND=0
 robot -F robot -d ./out/%BUILD_NUMBER% -o output-0.xml -l NONE -r NONE -P ./"keywords" -L TRACE:INFO "PChome Price Tracker.robot"
 if %ERRORLEVEL% neq 0 (
     :retry
@@ -30,8 +30,8 @@ TIME /T
 GOTO :EOF
 
 :postProcessing
-for /F "delims=" %%F in ('dir /B /ON /A-D .\out\%BUILD_NUMBER%\output-*.xml') do (
-    SET "FILES=!FILES! .\out\%BUILD_NUMBER%\%%F"
+for /l %%X in (0, 1, %ROUND%) do (
+    SET "FILES=!FILES! .\out\%BUILD_NUMBER%\output-%%X.xml"
 )
 echo =================================Test  Result=================================
 rebot -d ./out/%BUILD_NUMBER%/result -o output.xml -l log.html -r report.html -L TRACE:INFO --merge %FILES%
