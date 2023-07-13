@@ -51,7 +51,7 @@ class extendedKeywords:
 
     @keyword(name='Create Database')
     def create_database(self, products):
-        with open('database/Price Tracking List.csv', 'w', newline='', errors='ignore') as file:
+        with open('database/Price Tracking List.csv', 'w', newline='', errors='ignore', encoding='utf-8-sig') as file:
             writer = csv.DictWriter(file, fieldnames=['商品名稱', '目前價格', '歷史最低價格' ,'連結', '圖片'])
             writer.writeheader()
             for product in products:
@@ -61,7 +61,7 @@ class extendedKeywords:
     def compare_and_update_database(self, products):
         send_list = []
         save_list = []
-        with open('database/Price Tracking List.csv', 'r', newline='') as file:
+        with open('database/Price Tracking List.csv', 'r', newline='', encoding='utf-8-sig') as file:
             reader = csv.DictReader(file)
             dictionaries = list(reader)
         
@@ -78,7 +78,7 @@ class extendedKeywords:
             else:
                 save_list.append({**common_field, '歷史最低價格': product['price']})
 
-        with open('database/Price Tracking List.csv', 'w', newline='', errors='ignore') as file:
+        with open('database/Price Tracking List.csv', 'w', newline='', errors='ignore', encoding='utf-8-sig') as file:
             writer = csv.DictWriter(file, fieldnames=['商品名稱', '目前價格', '歷史最低價格' ,'連結', '圖片'])
             writer.writeheader()
             writer.writerows(save_list)
