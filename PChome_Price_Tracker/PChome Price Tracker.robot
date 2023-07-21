@@ -41,7 +41,7 @@ Login
     [Teardown]    Run Keyword If    '${KEYWORD_STATUS}' == 'FAIL'    Login Troubleshoot
 
 Login Troubleshoot
-    ${detection} =    Run Keyword And Return Status    Element Should Be Visible    //*[@id='recaptcha_checkLoginAcc']//iframe[@title='reCAPTCHA']
+    ${detection} =    Run Keyword And Return Status    Element Should Be Visible    //*[@class='c-auth__recaptcha']//iframe[@title='reCAPTCHA']
     Run Keyword If    ${proxy} and ${detection}    Run Keywords    Switch IP    AND    Sleep    ${normalPeriodOfTime}
 
 Wait Until Tracking List Page Is Visible
